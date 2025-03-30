@@ -1,0 +1,30 @@
+<nav>
+    <a href="{{ url_for('home_bp.home') }}">
+        <img id="logo" src="../static/images/logo-redesign.jpg"/>
+        <span class="nav-heading">SoundVault Library<br><br></span>
+
+    </a>
+    <div class="navbar">
+        <h2 id="nav-heading-small">
+            <br>
+            {% if 'user_name' in session %} &nbsp &nbsp Hello, {{ session['user_name'] }} {% endif %}
+            <br><br>
+        </h2>
+        <ul>
+            <li><a href="{{ url_for('home_bp.home') }}">Home</a></li>
+            <li><a href="{{ url_for('catalogue_bp.catalogue') }}">Podcasts</a></li>
+            <li><a href="{{ url_for('playlists_bp.playlists') }}">My Playlists</a></li>
+            {% if session.get('user_name') %}
+<!--            <br><br><br>-->
+            <li><a href="{{ url_for('authentication_bp.logout') }}">Logout</a></li>
+            {% else %}
+<!--            <br><br><br>-->
+            <li><a href="{{ url_for('authentication_bp.register') }}">Register</a></li>
+            <li><a href="{{ url_for('authentication_bp.login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    <div id="nav-footer">
+        CS235 azap501 | hpra284 | bche926
+    </div>
+</nav>

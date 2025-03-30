@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SoundVault/Podcast Description</title>
+    <link
+            rel="stylesheet" href="../static/css/description.css"
+    />
+</head>
+<body>
+{% include"navbar.html" %}
+<div id="content-2">
+<!--    <header id="header">-->
+<!--        &lt;!&ndash;        CS235 Welcome to SoundVault&ndash;&gt;-->
+<!--        &lt;!&ndash;        <div class="copyright">&copy; azap501 | hpra284 | bche926</div>&ndash;&gt;-->
+<!--    </header>-->
+    <div class='container_back_button'>
+        <a href="{{ url_for('catalogue_bp.catalogue') }}" class="back_button">< Back To Podcasts </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <div id="container">
+        <div class="container-colour">
+            <main id="main">
+                <img class="main-img" src="{{ podcast.image }}" alt="podcast image">
+                <div class="description">
+                    <br>
+                    <h2>{{ podcast.title }}</h2>
+                    <p><b><i>Author:</i></b> {{ podcast.author.name }} </p>
+                    <p><b><i>Language:</i></b> {{ podcast.language }} </p>
+                    <p><b><i>Categories:</i></b> {{ podcast.categories | join(", ") }} </p>
+                    <p><b><i>Website:</i></b> <a href="{{ podcast.website }}" target="_blank" rel="noopener noreferrer">{{ podcast.title }} <sup>↗</sup></a></p>
+                    <p><b><i>iTunes ID:</i></b> {{ podcast.itunes_id }} </p>
+                    <p><b><i>Average Rating:</i></b> {{ avg_rating }} </p>
+                </div>
+
+            </main>
+
+        </div>
+
+        <br>
+        <h2>About</h2>
+        <p class="about-p">{{ podcast.description }}</p>
+
+        <br>
+        <h2 class="episode-h2">Episodes</h2>
+        <div id="episode_list">
+            <div class="pagination2">
+                {% set start_page = page - 1 %}
+                {% set end_page = page + 1 %}
+
+                {% if total_pages == 0 %}
+                {% set total_pages = 1 %}
+                {% endif %}
+
+                {% if total_pages <= 3 %}
+                {% set start_page = 1 %}
+                {% set end_page = total_pages %}
+                {% else %}
+                {% if start_page < 1 %}
+                {% set start_page = 1 %}
+                {% set end_page = 3 %}
+                {% endif %}
+
+                {% if end_page > total_pages %}
+                {% set end_page = total_pages %}
+                {% endif %}
+
+                {% if page == total_pages %}
+                {% set start_page = total_pages - 2 %}
+                {% endif %}
+                {% endif %}
+
+                <!-- First page button -->
+                <a href="{{ url_for('description_bp.description', podcast_id=podcast.id, page=1) }}"
+                   class="nav-link"><<</a>
+
+                <!-- Previous page button -->
+                {% if page > 1 %}
+                <a href="{{ url_for('description_bp.description', podcast_id=podcast.id, page=page-1) }}"
+                   class="nav-link"><</a>
+                {% endif %}
+
+                {% if page == 1 %}
+                <a href="" class="nav-link"> < </a>
+                {% endif %}
+
+                <!-- Page numbers -->
+                {% for p in range(start_page, end_page + 1) %}
+                <a href="{{ url_for('description_bp.description', podcast_id=podcast.id, page=p) }}"
+                   class="nav-link {% if p == page %}active{% endif %}">{{ p }}</a>
+                {% endfor %}
+
+                {% if page < total_pages %}
+                <a href="{{ url_for('description_bp.description', podcast_id=podcast.id, page=page+1) }}"
+                   class="nav-link">></a>
+                {% endif %}
+
+                {% if page == total_pages %}
+                <a href="" class="nav-link">></a>
+                {% endif %}
+
+                <!-- Last page button -->
+                <a href="{{ url_for('description_bp.description', podcast_id=podcast.id, page=total_pages) }}"
+                   class="nav-link">>></a>
+            </div>
+            <!--            <hr class="episode-hr">-->
+            <br>
+
+            {% for episode in episodes_on_page %}
+            <div class="episode-item">
+                <a href="{{ episode.audio }}" class="nav-link">
+            <span>
+                {{ loop.index0 + start_index + 1 }} - {{ episode.title }}
+            </span>
+                    <span>
+                |
+                {% if episode.pub_date.strftime("%d/%m/%Y") == "01/01/9999" %}
+                    n.d.
+                {% else %}
+                    {{ episode.pub_date.strftime("%d/%m/%Y") }}
+                {% endif %}
+            </span>
+                </a>
+                <form action="{{ url_for('playlists_bp.add_episode') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="episode_id" value="{{ episode.id }}">
+                    <input type="hidden" name="return_url" value="{{ request.url }}">
+                    <button type="submit" class="btn-add-small">Add to Playlist</button>
+                </form>
+            </div>
+            {% endfor %}
+
+        </div>
+        <br>
+
+        <div class="comment_title">
+            <h2>Comments:</h2>
+        </div>
+
+        <div>
+            <button class="comment-button" onclick="location.href='{{ podcast_dict.review_url }}'">Add Comment</button>
+        </div>
+    </div>
+
+
+    {% block content %}{% endblock %}
+
+    <div id="comment_list">
+        {% for review in reviews %}
+        <div class="comment_item">
+            <div class="rating">Rating: {{ review.rating }} / 5</div>
+            <div class="comment">{{ review.comment }}</div>
+            <div class="username">by {{ review.user.username }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+</body>
+</html>

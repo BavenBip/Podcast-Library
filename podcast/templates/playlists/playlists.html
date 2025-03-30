@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Playlists</title>
+    <link
+            rel="stylesheet"
+            href="../static/css/main.css"
+    />
+</head>
+
+<body>
+{% include"navbar.html" %}
+<div id="content-2">
+    <header id="header">
+        {{ current_playlist.name }}
+        <div class="copyright">&copy; azap501 | hpra284 | bche926</div>
+    </header>
+    <br>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    <main id="main">
+        <div id="podcast">
+            <ul>
+                {% for episode in current_playlist.playlist %}
+                <li class="nav-link">
+                    <a href="{{ episode.audio }}">
+                        Title: {{ episode.title }}
+                    </a>
+                    <form action="{{ url_for('playlists_bp.remove_episode') }}" method="post">
+                        <input type="hidden" name="episode_id" value="{{ episode.id }}">
+                        <button type="submit" class="btn btn-primary">Remove Episode</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </main>
+</div>
+</body>
+</html>

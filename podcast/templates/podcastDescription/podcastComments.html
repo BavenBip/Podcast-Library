@@ -1,0 +1,38 @@
+{% extends 'podcastDescription/podcastDescription.html' %}
+
+{% block content %}
+
+<div>
+    <form action="{{ handler_url }}" method="post" class="review-form" novalidate>
+        {{ form.podcast_id }}
+        {{ form.csrf_token }}
+
+        <div class="review-form-part">
+            {{ form.comment.label }}
+            {{ form.comment(class="form-inner textarea", style="width: 100%; font-size:15px;", placeholder="Type your comment (min: 4 characters)", cols="50", rows="6", wrap="hard") }}
+            {% if form.comment.errors %}
+            <ul class="errors">
+                {% for error in form.comment.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="review-form-part">
+            {{ form.rating.label }}
+            {{ form.rating(class="form-inner", style="font-size:15px;", placeholder="1-5", class="textarea", cols="50", rows="6", wrap="hard") }}
+            {% if form.rating.errors %}
+            <ul class="errors">
+                {% for error in form.rating.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        {{ form.submit(class="btn-submit") }}
+    </form>
+</div>
+
+{% endblock %}
